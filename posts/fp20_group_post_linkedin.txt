@@ -48,3 +48,7 @@ Mature, analytically rigorous foundation for AI-powered customer support operati
 
 Dashboard specifications: PowerBI_Dashboard_Specification.md
 Data source: AI_Agents_Customer_Support_Challenge_clean.xlsx
+
+I am participating in FP20 Analytics ZoomCharts Challenge 42
+#FP20Analytics #builtwithzoomcharts
+@Federico Pastor @ZoomCharts
