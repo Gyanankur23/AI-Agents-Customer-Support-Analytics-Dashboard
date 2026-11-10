@@ -1,0 +1,165 @@
+{
+  "name": "AI Agents Dashboard Theme",
+  "dataColors": [
+    "#8B5CF6",
+    "#14B8A6",
+    "#F59E0B",
+    "#EF4444",
+    "#3B82F6",
+    "#EC4899",
+    "#10B981",
+    "#6366F1"
+  ],
+  "background": "#F8FAFC",
+  "foreground": "#1E293B",
+  "tableAccent": "#8B5CF6",
+  "visualStyles": {
+    "page": {
+      "*": {
+        "outspace": [
+          {
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "visualHeader": [
+      {
+        "fontSize": 12,
+        "fontFamily": "Segoe UI",
+        "fontBold": true,
+        "foreground": {
+          "solid": {
+            "color": "#1E293B"
+          }
+        },
+        "background": {
+          "solid": {
+            "color": "#F1F5F9"
+          }
+        },
+        "border": {
+          "solid": {
+            "color": "#E2E8F0"
+          }
+        }
+      }
+    ],
+    "label": [
+      {
+        "fontSize": 10,
+        "fontFamily": "Segoe UI",
+        "fontBold": true,
+        "color": {
+          "solid": {
+            "color": "#475569"
+          }
+        }
+      }
+    ],
+    "title": [
+      {
+        "fontSize": 14,
+        "fontFamily": "Segoe UI",
+        "fontBold": true,
+        "color": {
+          "solid": {
+            "color": "#1E293B"
+          }
+        }
+      }
+    ],
+    "dataPoint": [
+      {
+        "defaultColor": {
+          "solid": {
+            "color": "#8B5CF6"
+          }
+        }
+      }
+    ],
+    "callout": [
+      {
+        "labelColor": {
+          "solid": {
+            "color": "#475569"
+          }
+        },
+        "valueColor": {
+          "solid": {
+            "color": "#1E293B"
+          }
+        }
+      }
+    ],
+    "card": [
+      {
+        "outline": [
+          {
+            "color": {
+              "solid": {
+                "color": "#E2E8F0"
+              }
+            },
+            "weight": 1
+          }
+        ]
+      }
+    ],
+    "slicer": [
+      {
+        "header": [
+          {
+            "fontSize": 12,
+            "fontFamily": "Segoe UI",
+            "fontBold": true,
+            "foreground": {
+              "solid": {
+                "color": "#1E293B"
+              }
+            }
+          }
+        ],
+        "body": [
+          {
+            "fontSize": 10,
+            "fontFamily": "Segoe UI",
+            "foreground": {
+              "solid": {
+                "color": "#475569"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "filterCard": [
+      {
+        "fontSize": 10,
+        "fontFamily": "Segoe UI",
+        "fontBold": true,
+        "foreground": {
+          "solid": {
+            "color": "#1E293B"
+          }
+        }
+      }
+    ],
+    "shape": [
+      {
+        "map": [
+          {
+            "projection": "equirectangular"
+          }
+        ]
+      }
+    ]
+  },
+  "bad": "#EF4444",
+  "neutral": "#F59E0B",
+  "good": "#10B981"
+}

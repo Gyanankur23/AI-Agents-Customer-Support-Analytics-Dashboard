@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px;}
+table {border-collapse: collapse; width: 100%; margin: 20px 0;}
+th, td {border: 1px solid #ddd; padding: 12px; text-align: left;}
+th {background-color: #4CAF50; color: white;}
+pre {background-color: #f4f4f4; padding: 15px; overflow-x: auto;}
+code {font-family: monospace;}
+</style>
+</head>
+<body>
+<h1>AI Agents Customer Support Dashboard - Power BI Specification</h1>
+<h2>Document Overview</h2>
+<p>This document provides the complete specification for the AI Agents Customer Support Analytics Dashboard, including data model, DAX measures, visual configurations, and ZoomCharts setup.</p>
+<h2>Dashboard Structure</h2>
+<h3>Single Page Dashboard</h3>
+<h4>Key Performance Indicators (KPIs) - Top Row</h4>
+<table>
+<thead>
+<tr>
+<th>KPI Name</th>
+<th>DAX Formula</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total Tickets</td>
+<td><code>COUNTROWS(FactSupportTicketsTable)</code></td>
+<td>#,##0</td>
+</tr>
+<tr>
+<td>Avg Resolution Hours</td>
+<td><code>DIVIDE(SUM(FactSupportTicketsTable[ResolutionHours]), COUNTROWS(FactSupportTicketsTable))</code></td>
+<td>#,##0.0 "hrs"</td>
+</tr>
+<tr>
+<td>CSAT Score</td>
+<td><code>DIVIDE(SUM(FactSupportTicketsTable[CSATScore]), COUNTROWS(FactSupportTicketsTable[CSATScore]))</code></td>
+<td>#.0</td>
+</tr>
+<tr>
+<td>FCR Rate</td>
+<td><code>DIVIDE(CALCULATE(COUNTROWS(FactSupportTicketsTable), FactSupportTicketsTable[InitialResolvedFlag] = 1), COUNTROWS(FactSupportTicketsTable), 0)</code></td>
+<td>0.0%</td>
+</tr>
+<tr>
+<td>Total Cost EUR</td>
+<td><code>SUM(FactSupportTicketsTable[AICostEUR]) + SUM(FactSupportTicketsTable[HumanCostEUR]) + SUM(FactSupportTicketsTable[RepeatCostEUR])</code></td>
+<td>€#,##0</td>
+</tr>
+<tr>
+<td>Avg First Response Minutes</td>
+<td><code>DIVIDE(SUM(FactSupportTicketsTable[FirstResponseMinutes]), COUNTROWS(FactSupportTicketsTable))</code></td>
+<td>#,##0.0 "min"</td>
+</tr>
+<tr>
+<td>Repeat Contact Rate</td>
+<td><code>DIVIDE(CALCULATE(COUNTROWS(FactSupportTicketsTable), FactSupportTicketsTable[RepeatContactCount7d] &gt; 0), COUNTROWS(FactSupportTicketsTable), 0)</code></td>
+<td>0.0%</td>
+</tr>
+<tr>
+<td>Escalation Rate</td>
+<td><code>DIVIDE(CALCULATE(COUNTROWS(FactSupportTicketsTable), FactSupportTicketsTable[EscalationReason] &lt;&gt; "Not applicable"), COUNTROWS(FactSupportTicketsTable), 0)</code></td>
+<td>0.0%</td>
+</tr>
+</tbody>
+</table>
+<h4>Visual Configurations</h4>
+<p><strong>Visual 1: Resolution Time Trend by Support Path (Line Chart)</strong>
+- <strong>Fields:</strong>
+  - X-Axis: DimDate[Date]
+  - Y-Axis: [Avg Resolution Hours]
+  - Legend: DimSupportRoute[SupportPath]
+- <strong>Settings:</strong>
+  - Title: Resolution Time Trend by Support Path
+  - Line Type: Smooth
+  - Show Points: Yes
+  - Time Granularity: Day
+  - Color Palette: Purple/Teal gradient</p>
+<p><strong>Visual 2: FCR Rate by Issue Category (Bar Chart)</strong>
+- <strong>Fields:</strong>
+  - Axis: DimIssue[IssueCategory]
+  - Values: [FCR Rate]
+- <strong>Settings:</strong>
+  - Title: FCR Rate by Issue Category
+  - Bar Type: Clustered
+  - Data Labels: Show
+  - Sort: Descending by value</p>
+<p><strong>Visual 3: CSAT Distribution by Channel &amp; AI Agent (Pie Chart)</strong>
+- <strong>Fields:</strong>
+  - Legend: DimSupportRoute[Channel]
+  - Values: [Total Tickets]
+  - Details: DimSupportRoute[AIAgent]
+- <strong>Settings:</strong>
+  - Title: CSAT Distribution by Channel &amp; AI Agent
+  - Color by: Channel
+  - Data Labels: Percentage
+  - Tooltip: Channel, AI Agent, Ticket Count, Avg CSAT</p>
+<p><strong>Visual 4: Resolution Hours by AI Agent &amp; Product (Stacked Bar Chart)</strong>
+- <strong>Fields:</strong>
+  - Axis: DimSupportRoute[AIAgent]
+  - Values: [Avg Resolution Hours]
+  - Legend: DimProduct[ProductName]
+- <strong>Settings:</strong>
+  - Title: Resolution Hours by AI Agent &amp; Product
+  - Bar Type: Stacked
+  - Data Labels: Show
+  - Sort: Descending by total</p>
+<p><strong>Visual 5: First Response Time by Product &amp; Issue Category (Matrix)</strong>
+- <strong>Fields:</strong>
+  - Rows: DimProduct[ProductName]
+  - Columns: DimIssue[IssueCategory]
+  - Values: [Avg First Response Minutes]
+- <strong>Settings:</strong>
+  - Title: First Response Time by Product &amp; Issue Category
+  - Color Scale: Green to Red gradient
+  - Data Labels: Show</p>
+<p><strong>Visual 6: Resolution Hours &amp; CSAT by Issue Category (Combo Chart)</strong>
+- <strong>Fields:</strong>
+  - Axis: DimIssue[IssueCategory]
+  - Column Values: [Avg Resolution Hours]
+  - Line Values: [CSAT Score]
+- <strong>Settings:</strong>
+  - Title: Resolution Hours &amp; CSAT by Issue Category
+  - Column Color: Purple
+  - Line Color: Teal
+  - Data Labels: Show</p>
+<p><strong>Visual 7: Ticket Volume by AI Agent &amp; Support Path (Treemap)</strong>
+- <strong>Fields:</strong>
+  - Group: DimSupportRoute[SupportPath]
+  - Values: [Total Tickets]
+  - Category: DimSupportRoute[AIAgent]
+- <strong>Settings:</strong>
+  - Title: Ticket Volume by AI Agent &amp; Support Path
+  - Color by: AI Agent
+  - Labels: Support Path + Count</p>
+<p><strong>Visual 8: Ticket Distribution by Customer Tier &amp; Lifecycle (Donut Chart)</strong>
+- <strong>Fields:</strong>
+  - Legend: DimCustomerProfile[CustomerTier]
+  - Values: [Total Tickets]
+  - Details: DimCustomerProfile[Lifecycle]
+- <strong>Settings:</strong>
+  - Title: Ticket Distribution by Customer Tier &amp; Lifecycle
+  - Donut Hole Size: 50%
+  - Color by: Customer Tier
+  - Data Labels: Tier + Percentage
+  - Tooltip: Tier, Lifecycle, Ticket Count, Avg CSAT</p>
+<h2>Data Model</h2>
+<h3>Fact Table: FactSupportTicketsTable</h3>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TicketID</td>
+<td>Text</td>
+<td>Unique root episode identifier</td>
+</tr>
+<tr>
+<td>CreatedDate</td>
+<td>Date</td>
+<td>Date-only creation cohort</td>
+</tr>
+<tr>
+<td>IssueKey</td>
+<td>Whole number</td>
+<td>Foreign key to DimIssue</td>
+</tr>
+<tr>
+<td>ProfileKey</td>
+<td>Whole number</td>
+<td>Foreign key to DimCustomerProfile</td>
+</tr>
+<tr>
+<td>ProductKey</td>
+<td>Whole number</td>
+<td>Foreign key to DimProduct</td>
+</tr>
+<tr>
+<td>RouteKey</td>
+<td>Whole number</td>
+<td>Foreign key to DimSupportRoute</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Text</td>
+<td>Complexity level: Low, Medium, High</td>
+</tr>
+<tr>
+<td>Priority</td>
+<td>Text</td>
+<td>Priority: Normal, High, Urgent</td>
+</tr>
+<tr>
+<td>InitialResolvedFlag</td>
+<td>Whole number</td>
+<td>1 = resolved on first contact, 0 = not</td>
+</tr>
+<tr>
+<td>RepeatContactCount7d</td>
+<td>Whole number</td>
+<td>Number of repeat contacts within 7 days</td>
+</tr>
+<tr>
+<td>CSATScore</td>
+<td>Whole number</td>
+<td>Customer satisfaction score (1-5)</td>
+</tr>
+<tr>
+<td>FirstResponseMinutes</td>
+<td>Decimal</td>
+<td>Time to first response in minutes</td>
+</tr>
+<tr>
+<td>AIConversationMinutes</td>
+<td>Decimal</td>
+<td>AI handling time in minutes</td>
+</tr>
+<tr>
+<td>HumanHandlingMinutes</td>
+<td>Decimal</td>
+<td>Human handling time in minutes</td>
+</tr>
+<tr>
+<td>QueueMinutes</td>
+<td>Decimal</td>
+<td>Time spent in queue in minutes</td>
+</tr>
+<tr>
+<td>ResolutionHours</td>
+<td>Decimal</td>
+<td>Total resolution time in hours</td>
+</tr>
+<tr>
+<td>SLATargetHours</td>
+<td>Decimal</td>
+<td>SLA target in hours</td>
+</tr>
+<tr>
+<td>SLAMetFlag</td>
+<td>Whole number</td>
+<td>1 = SLA met, 0 = SLA missed</td>
+</tr>
+<tr>
+<td>AICostEUR</td>
+<td>Decimal</td>
+<td>AI cost in EUR</td>
+</tr>
+<tr>
+<td>HumanCostEUR</td>
+<td>Decimal</td>
+<td>Human cost in EUR</td>
+</tr>
+<tr>
+<td>RepeatCostEUR</td>
+<td>Decimal</td>
+<td>Cost of repeat contacts in EUR</td>
+</tr>
+<tr>
+<td>EscalationReason</td>
+<td>Text</td>
+<td>Reason for escalation (if any)</td>
+</tr>
+<tr>
+<td>HandoffBand</td>
+<td>Text</td>
+<td>Handoff band information</td>
+</tr>
+</tbody>
+</table>
+<h3>Dimension Tables</h3>
+<h4>DimDate</h4>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date</td>
+<td>Date</td>
+<td>Full date</td>
+</tr>
+<tr>
+<td>Year</td>
+<td>Integer</td>
+<td>Year</td>
+</tr>
+<tr>
+<td>Quarter</td>
+<td>Text</td>
+<td>Quarter (Q1, Q2, Q3, Q4)</td>
+</tr>
+<tr>
+<td>MonthNo</td>
+<td>Integer</td>
+<td>Month number (1-12)</td>
+</tr>
+<tr>
+<td>MonthName</td>
+<td>Text</td>
+<td>Month name</td>
+</tr>
+<tr>
+<td>YearMonth</td>
+<td>Text</td>
+<td>Year-month format (YYYY-MM)</td>
+</tr>
+<tr>
+<td>YearMonthSort</td>
+<td>Integer</td>
+<td>Sortable year-month (YYYYMM)</td>
+</tr>
+</tbody>
+</table>
+<h4>DimIssue</h4>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IssueKey</td>
+<td>Whole number</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>IssueCategory</td>
+<td>Text</td>
+<td>Issue category (e.g., Account access, Orders &amp; delivery)</td>
+</tr>
+<tr>
+<td>IssueSubcategory</td>
+<td>Text</td>
+<td>Issue subcategory (e.g., Password reset, Order tracking)</td>
+</tr>
+<tr>
+<td>SupportTeam</td>
+<td>Text</td>
+<td>Support team responsible</td>
+</tr>
+</tbody>
+</table>
+<h4>DimCustomerProfile</h4>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ProfileKey</td>
+<td>Whole number</td>
+<td>Primary key (profile is a segment combination)</td>
+</tr>
+<tr>
+<td>Region</td>
+<td>Text</td>
+<td>Geographic region</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Text</td>
+<td>Country</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>Text</td>
+<td>Language</td>
+</tr>
+<tr>
+<td>CustomerTier</td>
+<td>Text</td>
+<td>Customer tier (Standard, Plus, Premium)</td>
+</tr>
+<tr>
+<td>Lifecycle</td>
+<td>Text</td>
+<td>Lifecycle stage (New, Established, Churned)</td>
+</tr>
+</tbody>
+</table>
+<h4>DimProduct</h4>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ProductKey</td>
+<td>Whole number</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>ProductFamily</td>
+<td>Text</td>
+<td>Product family (Commerce, Productivity)</td>
+</tr>
+<tr>
+<td>ProductName</td>
+<td>Text</td>
+<td>Product name</td>
+</tr>
+</tbody>
+</table>
+<h4>DimSupportRoute</h4>
+<table>
+<thead>
+<tr>
+<th>Column Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RouteKey</td>
+<td>Whole number</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>Channel</td>
+<td>Text</td>
+<td>Channel: Live chat, Email</td>
+</tr>
+<tr>
+<td>SupportPath</td>
+<td>Text</td>
+<td>Support path: AI only, AI → human, Human only</td>
+</tr>
+<tr>
+<td>AIAgent</td>
+<td>Text</td>
+<td>AI agent name (e.g., Assist AI, No AI)</td>
+</tr>
+<tr>
+<td>PathColor</td>
+<td>Text</td>
+<td>Color code for visualization</td>
+</tr>
+</tbody>
+</table>
+<h2>DAX Measures</h2>
+<h3>Core Measures</h3>
+<pre><code class="language-dax">Total Tickets = 
+COUNTROWS(FactSupportTicketsTable)
+
+Total Tickets per Route = 
+CALCULATE(
+    [Total Tickets],
+    ALLEXCEPT(DimSupportRoute, DimSupportRoute[RouteKey])
+)
+
+Avg Resolution Hours = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[ResolutionHours]),
+    COUNTROWS(FactSupportTicketsTable)
+)
+
+Avg First Response Minutes = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[FirstResponseMinutes]),
+    COUNTROWS(FactSupportTicketsTable)
+)
+
+CSAT Score = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[CSATScore]),
+    COUNTROWS(FactSupportTicketsTable[CSATScore])
+)
+
+FCR Count = 
+CALCULATE(
+    COUNTROWS(FactSupportTicketsTable),
+    FactSupportTicketsTable[InitialResolvedFlag] = 1
+)
+
+FCR Rate = 
+DIVIDE(
+    [FCR Count],
+    [Total Tickets],
+    0
+)
+
+Escalation Count = 
+CALCULATE(
+    COUNTROWS(FactSupportTicketsTable),
+    FactSupportTicketsTable[EscalationReason] &lt;&gt; &quot;Not applicable&quot;
+)
+
+Escalation Rate = 
+DIVIDE(
+    [Escalation Count],
+    [Total Tickets],
+    0
+)
+
+Repeat Contact Count = 
+CALCULATE(
+    COUNTROWS(FactSupportTicketsTable),
+    FactSupportTicketsTable[RepeatContactCount7d] &gt; 0
+)
+
+Repeat Contact Rate = 
+DIVIDE(
+    [Repeat Contact Count],
+    [Total Tickets],
+    0
+)
+
+SLA Met Count = 
+CALCULATE(
+    COUNTROWS(FactSupportTicketsTable),
+    FactSupportTicketsTable[SLAMetFlag] = 1
+)
+
+SLA Met Rate = 
+DIVIDE(
+    [SLA Met Count],
+    [Total Tickets],
+    0
+)
+
+Total AI Cost EUR = 
+SUM(FactSupportTicketsTable[AICostEUR])
+
+Total Human Cost EUR = 
+SUM(FactSupportTicketsTable[HumanCostEUR])
+
+Total Repeat Cost EUR = 
+SUM(FactSupportTicketsTable[RepeatCostEUR])
+
+Total Cost EUR = 
+[Total AI Cost EUR] + [Total Human Cost EUR] + [Total Repeat Cost EUR]
+
+Avg AI Handling Minutes = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[AIConversationMinutes]),
+    COUNTROWS(FactSupportTicketsTable)
+)
+
+Avg Human Handling Minutes = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[HumanHandlingMinutes]),
+    COUNTROWS(FactSupportTicketsTable)
+)
+
+Avg Queue Minutes = 
+DIVIDE(
+    SUM(FactSupportTicketsTable[QueueMinutes]),
+    COUNTROWS(FactSupportTicketsTable)
+)
+</code></pre>
+<h3>Calculated Columns</h3>
+<pre><code class="language-dax">Performance Tier = 
+SWITCH(
+    TRUE(),
+    FactSupportTicketsTable[CSATScore] &gt;= 4.5 &amp;&amp; FactSupportTicketsTable[ResolutionHours] &lt;= 0.083, &quot;High&quot;,
+    FactSupportTicketsTable[CSATScore] &gt;= 3.5 &amp;&amp; FactSupportTicketsTable[ResolutionHours] &lt;= 0.167, &quot;Medium&quot;,
+    ISBLANK(FactSupportTicketsTable[CSATScore]) || ISBLANK(FactSupportTicketsTable[ResolutionHours]), &quot;Unknown&quot;,
+    &quot;Low&quot;
+)
+
+Performance Tier Color = 
+SWITCH(
+    [Performance Tier],
+    &quot;High&quot;, &quot;#10B981&quot;,
+    &quot;Medium&quot;, &quot;#F59E0B&quot;,
+    &quot;Low&quot;, &quot;#EF4444&quot;,
+    &quot;Unknown&quot;, &quot;#9CA3AF&quot;
+)
+
+Resolution Minutes = 
+FactSupportTicketsTable[ResolutionHours] * 60
+</code></pre>
+<h2>ZoomCharts Configuration</h2>
+<h3>Network Graph Settings</h3>
+<pre><code class="language-json">{
+  &quot;nodeSize&quot;: {
+    &quot;min&quot;: 20,
+    &quot;max&quot;: 50,
+    &quot;field&quot;: &quot;Total Tickets per Route&quot;
+  },
+  &quot;linkThickness&quot;: {
+    &quot;min&quot;: 1,
+    &quot;max&quot;: 3
+  },
+  &quot;layout&quot;: {
+    &quot;type&quot;: &quot;force-directed&quot;,
+    &quot;iterations&quot;: 100
+  },
+  &quot;colors&quot;: {
+    &quot;field&quot;: &quot;Performance Tier&quot;,
+    &quot;palette&quot;: [&quot;#10B981&quot;, &quot;#F59E0B&quot;, &quot;#EF4444&quot;]
+  }
+}
+</code></pre>
+<h3>Time Series Settings</h3>
+<pre><code class="language-json">{
+  &quot;lineType&quot;: &quot;smooth&quot;,
+  &quot;showPoints&quot;: true,
+  &quot;timeGranularity&quot;: &quot;day&quot;,
+  &quot;legend&quot;: {
+    &quot;position&quot;: &quot;top&quot;,
+    &quot;show&quot;: true
+  },
+  &quot;colors&quot;: {
+    &quot;palette&quot;: [&quot;#8B5CF6&quot;, &quot;#14B8A6&quot;, &quot;#3B82F6&quot;]
+  }
+}
+</code></pre>
+<h3>Sunburst Settings</h3>
+<pre><code class="language-json">{
+  &quot;innerRadius&quot;: &quot;30%&quot;,
+  &quot;outerRadius&quot;: &quot;90%&quot;,
+  &quot;sort&quot;: &quot;descending&quot;,
+  &quot;sortField&quot;: &quot;Total Tickets&quot;,
+  &quot;colors&quot;: {
+    &quot;palette&quot;: [&quot;#8B5CF6&quot;, &quot;#14B8A6&quot;, &quot;#F59E0B&quot;, &quot;#EF4444&quot;]
+  }
+}
+</code></pre>
+<h2>Slicer Configuration</h2>
+<h3>Date Range Slicer</h3>
+<ul>
+<li>Type: Date Range</li>
+<li>Field: DimDate[Date]</li>
+<li>Default: Last 30 days</li>
+</ul>
+<h3>Support Path Slicer</h3>
+<ul>
+<li>Type: Checkbox</li>
+<li>Field: DimSupportRoute[SupportPath]</li>
+<li>Default: All selected</li>
+</ul>
+<h3>Issue Category Slicer</h3>
+<ul>
+<li>Type: Checkbox</li>
+<li>Field: DimIssue[IssueCategory]</li>
+<li>Default: All selected</li>
+</ul>
+<h3>AI Agent Slicer</h3>
+<ul>
+<li>Type: Checkbox</li>
+<li>Field: DimSupportRoute[AIAgent]</li>
+<li>Default: All selected</li>
+</ul>
+<h3>Customer Tier Slicer</h3>
+<ul>
+<li>Type: Checkbox</li>
+<li>Field: DimCustomerProfile[CustomerTier]</li>
+<li>Default: All selected</li>
+</ul>
+<h2>Bookmark Configuration</h2>
+<h3>Bookmark 1: High Performers</h3>
+<ul>
+<li>Filters: Performance Tier = "High"</li>
+<li>Display: Highlight high-performing tickets</li>
+</ul>
+<h3>Bookmark 2: Needs Improvement</h3>
+<ul>
+<li>Filters: Performance Tier = "Low"</li>
+<li>Display: Highlight tickets needing attention</li>
+</ul>
+<h3>Bookmark 3: High Volume</h3>
+<ul>
+<li>Sort: Total Tickets (descending)</li>
+<li>Display: Focus on high-volume support routes</li>
+</ul>
+<h2>Tooltips Configuration</h2>
+<h3>Ticket Performance Tooltip</h3>
+<ul>
+<li>Ticket ID</li>
+<li>Support Path</li>
+<li>AI Agent</li>
+<li>Total Tickets</li>
+<li>Avg Resolution Hours</li>
+<li>CSAT Score</li>
+<li>FCR Rate</li>
+<li>Performance Tier</li>
+</ul>
+<h3>Ticket Detail Tooltip</h3>
+<ul>
+<li>Ticket ID</li>
+<li>Issue Category</li>
+<li>Issue Subcategory</li>
+<li>Resolution Hours</li>
+<li>CSAT Score</li>
+<li>Escalation Reason</li>
+<li>SLA Met (Yes/No)</li>
+</ul>
+<h2>Conditional Formatting</h2>
+<h3>Performance Tier Color Scale</h3>
+<ul>
+<li>High: Green (#10B981)</li>
+<li>Medium: Amber (#F59E0B)</li>
+<li>Low: Red (#EF4444)</li>
+</ul>
+<h3>CSAT Score Color Scale</h3>
+<ul>
+<li>4.5-5.0: Green (#10B981)</li>
+<li>3.5-4.4: Amber (#F59E0B)</li>
+<li>Below 3.5: Red (#EF4444)</li>
+</ul>
+<h3>Resolution Time Color Scale</h3>
+<ul>
+<li>Below 5 hours: Green (#10B981)</li>
+<li>5-10 hours: Amber (#F59E0B)</li>
+<li>Above 10 hours: Red (#EF4444)</li>
+</ul>
+<h2>Data Refresh Configuration</h2>
+<h3>Refresh Schedule</h3>
+<ul>
+<li>Frequency: Daily</li>
+<li>Time: 6:00 AM UTC</li>
+<li>Incremental Refresh: Enabled (last 30 days)</li>
+</ul>
+<h3>Gateway Configuration</h3>
+<ul>
+<li>Gateway: On-premises data gateway</li>
+<li>Credential: Service account with Excel file access</li>
+<li>Connection: Excel file path</li>
+</ul>
+<h2>Security Configuration</h2>
+<h3>Row-Level Security (RLS)</h3>
+<ul>
+<li>Role: Regional Manager</li>
+<li>
+<p>Filter: DimCustomerProfile[Region] = USERPRINCIPALNAME()</p>
+</li>
+<li>
+<p>Role: Support Team Lead</p>
+</li>
+<li>Filter: DimIssue[SupportTeam] = "Team Name"</li>
+</ul>
+<h3>Object-Level Security</h3>
+<ul>
+<li>Hide sensitive columns: TicketID, ProfileKey</li>
+<li>Show only aggregated metrics to certain roles</li>
+</ul>
+<h2>Performance Optimization</h2>
+<h3>Data Model Optimizations</h3>
+<ul>
+<li>Set date table as Mark as Date Table</li>
+<li>Create relationships with single direction</li>
+<li>Use integer keys for relationships</li>
+<li>Disable auto date/time</li>
+</ul>
+<h3>Measure Optimizations</h3>
+<ul>
+<li>Use CALCULATE with proper filter context</li>
+<li>Avoid iterating over large tables</li>
+<li>Use variables for complex calculations</li>
+<li>Implement DIVIDE with alternative value</li>
+</ul>
+<h2>Mobile Layout</h2>
+<h3>Portrait Mode</h3>
+<ul>
+<li>Stack KPIs vertically</li>
+<li>Use tabbed navigation for visuals</li>
+<li>Simplify slicers to dropdowns</li>
+</ul>
+<h3>Landscape Mode</h3>
+<ul>
+<li>2x2 grid for KPIs</li>
+<li>Horizontal scroll for visuals</li>
+<li>Compact slicer panel</li>
+</ul>
+</body>
+</html>
