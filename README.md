@@ -4,43 +4,36 @@ A comprehensive Power BI dashboard for analyzing AI agent performance in custome
 
 ## Overview
 
-This dashboard provides real-time visibility into AI agent performance, customer satisfaction metrics, resolution times, and operational efficiency. It enables support teams to make data-driven decisions about AI agent deployment, training needs, and process improvements.
+This dashboard provides end-to-end visibility into AI-powered customer support operations, enabling data-driven optimization of resolution times, customer satisfaction, cost efficiency, and operational performance across multiple support channels and AI agent configurations.
 
-## Dashboard Pages
+## Dashboard Structure
 
-### Page 1: Agent Performance Overview
+### Single Page Dashboard with 8 KPI Cards
 
-Key Performance Indicators:
-- Total Interactions Handled
-- Average Resolution Time (Minutes)
-- Customer Satisfaction Score (CSAT)
-- First Contact Resolution Rate
-
-Main Visuals:
-- Agent Performance Distribution (ZoomCharts Network Graph)
-- Resolution Time Trend (ZoomCharts Time Series)
-- Interaction Volume by Category (Treemap)
-
-### Page 2: Detailed Analytics & Insights
-
-Key Performance Indicators:
+**Key Performance Indicators:**
+- Total Tickets
+- Avg Resolution Hours
+- CSAT Score
+- FCR Rate
+- Total Cost EUR
+- Avg First Response Minutes
+- Repeat Contact Rate
 - Escalation Rate
-- Agent Utilization Percentage
-- Knowledge Base Coverage
-- Average Handling Time (AHT)
 
-Main Visuals:
-- Performance by Agent Type (ZoomCharts Sunburst)
-- CSAT vs Resolution Time Analysis (Scatter Plot)
-- Issue Category Breakdown (Stacked Bar Chart)
+### 8 Interactive Visualizations
 
-## Dashboard Screenshots
+1. **Resolution Time Trend by Support Path** - Temporal analysis of resolution performance across AI-only, AI→human, and human-only support paths
+2. **FCR Rate by Issue Category** - Identifies issue types with highest first-contact resolution success
+3. **CSAT Distribution by Channel & AI Agent** - Channel performance breakdown (Live Chat, Email) with AI agent attribution
+4. **Resolution Hours by AI Agent & Product** - Product-specific performance analysis by AI agent type
+5. **First Response Time by Product & Issue Category** - Matrix visualization identifying response time bottlenecks
+6. **Resolution Hours & CSAT by Issue Category** - Combo chart correlating resolution time with customer satisfaction
+7. **Ticket Volume by AI Agent & Support Path** - Treemap showing workload distribution across support routes
+8. **Ticket Distribution by Customer Tier & Lifecycle** - Customer segment analysis for strategic insights
 
-### Agent Performance Overview
-![Performance Overview](images/performance_overview.png)
+## Dashboard Screenshot
 
-### Detailed Analytics & Insights
-![Detailed Analytics](images/detailed_analytics.png)
+![Merged Dashboard](images/Merged_Dashboard.png)
 
 ## Key Features
 
@@ -54,38 +47,35 @@ Main Visuals:
 ## Data Model
 
 ### Fact Table
-- FactAgentInteractions: Individual interaction records with performance metrics
+- FactSupportTicketsTable: Individual ticket records with complete lifecycle metrics (23 columns)
 
 ### Dimension Tables
-- DimAgent: AI agent master data
-- DimDate: Date calendar
-- DimIssueCategory: Issue type categorization
-- DimCustomer: Customer information
-- DimChannel: Communication channel (chat, email, voice)
-- DimPerformanceTier: Performance classification
-- DimKnowledgeBase: Knowledge base coverage
+- DimDate: Date calendar with Year, Quarter, Month, Day attributes
+- DimIssue: Issue categorization (Category, Subcategory, SupportTeam)
+- DimCustomerProfile: Customer segmentation (Region, Country, Language, CustomerTier, Lifecycle)
+- DimProduct: Product information (ProductFamily, ProductName)
+- DimSupportRoute: Support path configuration (Channel, SupportPath, AIAgent, PathColor)
 
 ## Key Metrics
 
 ### Performance Metrics
-- Resolution Time (Average, Median, 90th percentile)
-- First Contact Resolution Rate
-- Customer Satisfaction Score (CSAT)
-- Net Promoter Score (NPS)
-- Agent Utilization Rate
+- Total Tickets volume
+- Average Resolution Hours
+- CSAT Score (1-5 scale)
+- FCR Rate (First Contact Resolution)
+- Average First Response Minutes
 
 ### Efficiency Metrics
-- Average Handling Time (AHT)
+- Total Cost EUR (AI + Human + Repeat costs)
+- Repeat Contact Rate
 - Escalation Rate
-- Transfer Rate
-- Self-Service Resolution Rate
-- Knowledge Base Hit Rate
+- Average AI Handling Minutes
+- Average Human Handling Minutes
+- Average Queue Minutes
 
 ### Quality Metrics
-- Accuracy Score
-- Compliance Score
-- Training Completion Rate
-- Agent Confidence Score
+- SLA Met Rate
+- Performance Tier classification (High/Medium/Low/Unknown)
 
 ## Technology Stack
 
@@ -125,13 +115,23 @@ The dashboard uses the following Excel file:
 ## DAX Measures
 
 Key measures include:
-- Total Interactions
-- Average Resolution Time
+- Total Tickets
+- Avg Resolution Hours
 - CSAT Score
-- First Contact Resolution Rate
-- Escalation Rate
-- Agent Utilization
-- Performance Tier (calculated column for conditional formatting)
+- FCR Count & FCR Rate
+- Escalation Count & Escalation Rate
+- Repeat Contact Count & Repeat Contact Rate
+- SLA Met Count & SLA Met Rate
+- Total AI Cost EUR
+- Total Human Cost EUR
+- Total Repeat Cost EUR
+- Total Cost EUR
+- Avg First Response Minutes
+- Avg AI Handling Minutes
+- Avg Human Handling Minutes
+- Avg Queue Minutes
+
+All measures follow Power BI best practices with DIVIDE function alternative values, proper CALCULATE filter context, and NULL value handling.
 
 See `docs/PowerBI_Dashboard_Specification.md` for complete DAX formulas.
 
@@ -139,17 +139,23 @@ See `docs/PowerBI_Dashboard_Specification.md` for complete DAX formulas.
 
 ```
 .
-├── AI_Agents_Dashboard.pbix                                    # Power BI report
+├── AI Agents Customer Support Analytics Dashboard.pbix          # Power BI report
 ├── README.md                                                   # This file
+├── convert_to_html.py                                          # HTML conversion script
 ├── data/
 │   └── AI_Agents_Customer_Support_Challenge_clean.xlsx        # Source data
 ├── docs/
 │   ├── AI_Agents_Dashboard_Theme.json                         # Custom theme
-│   └── PowerBI_Dashboard_Specification.md                      # Detailed specs
+│   ├── PowerBI_Dashboard_Specification.md                      # Detailed specs
+│   ├── PowerBI_Dashboard_Specification.html                    # HTML version of specs
 │   └── What ZoomCharts visuals to use in Power BI.pdf          # ZoomCharts guide
-└── images/
-    ├── performance_overview.png                                # Overview screenshot
-    └── detailed_analytics.png                                  # Analytics screenshot
+├── images/
+│   ├── Merged_Dashboard.png                                    # Complete dashboard screenshot
+│   ├── Screenshot 2026-11-11 044344.png                        # Dashboard page 1
+│   └── Screenshot 2026-11-11 044417.png                        # Dashboard page 2
+└── posts/
+    ├── fp20_group_post.md                                      # FP20 group submission post
+    └── normal_project_post.md                                 # General project post
 ```
 
 ## Usage
