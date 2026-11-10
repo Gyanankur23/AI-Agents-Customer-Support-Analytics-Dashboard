@@ -1,0 +1,46 @@
+AI Agents Customer Support Analytics Dashboard
+
+[Dashboard Image: See attached screenshot]
+
+Overview
+
+Comprehensive Power BI dashboard providing end-to-end visibility into AI-powered customer support operations, enabling data-driven optimization of resolution times, customer satisfaction, cost efficiency, and operational performance.
+
+Dashboard Architecture
+
+Single-Page Layout with 8 KPI Cards:
+- Total Tickets, Avg Resolution Hours, CSAT Score, FCR Rate
+- Total Cost EUR, Avg First Response Minutes, Repeat Contact Rate, Escalation Rate
+
+8 Interactive Visualizations
+
+1. Resolution Time Trend by Support Path - Tracks performance across AI-only, AI-to-human, human-only paths
+2. FCR Rate by Issue Category - Highlights first-contact resolution success
+3. CSAT Distribution by Channel & AI Agent - Channel breakdown with AI agent attribution
+4. Resolution Hours by AI Agent & Product - Product-specific performance analysis
+5. First Response Time by Product & Issue Category - Matrix visualization for bottlenecks
+6. Resolution Hours & CSAT by Issue Category - Correlates resolution time with satisfaction
+7. Ticket Volume by AI Agent & Support Path - Workload distribution treemap
+8. Ticket Distribution by Customer Tier & Lifecycle - Customer segment analysis
+
+Technical Implementation
+
+Data Model: Star schema with FactSupportTicketsTable, five dimension tables, optimized relationships.
+
+DAX Measures: Power BI best practices - DIVIDE with alternative values, proper CALCULATE filter context, NULL value handling.
+
+Performance Optimizations: Date table marked, auto date/time disabled, incremental refresh, row-level security.
+
+Business Impact
+
+Operational Excellence: Identify bottlenecks, optimize response performance, track escalation patterns.
+
+Financial Efficiency: Analyze AI vs. human cost allocation, quantify repeat contact impact, support ROI calculations.
+
+Quality Assurance: Monitor CSAT scores, track FCR rates, evaluate AI agent consistency.
+
+Conclusion
+
+Mature, analytically rigorous approach to AI-powered customer support analytics, providing insights to optimize operations, control costs, and deliver superior customer experiences.
+
+Built with Power BI | Data Source: AI_Agents_Customer_Support_Challenge_clean.xlsx
