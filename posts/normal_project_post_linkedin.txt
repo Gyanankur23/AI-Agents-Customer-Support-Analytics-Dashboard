@@ -44,3 +44,7 @@ Conclusion
 Mature, analytically rigorous approach to AI-powered customer support analytics, providing insights to optimize operations, control costs, and deliver superior customer experiences.
 
 Built with Power BI | Data Source: AI_Agents_Customer_Support_Challenge_clean.xlsx
+
+I am participating in FP20 Analytics ZoomCharts Challenge 42
+#FP20Analytics #builtwithzoomcharts
+@Federico Pastor @ZoomCharts
